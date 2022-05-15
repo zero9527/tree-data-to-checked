@@ -1,0 +1,8 @@
+.tree-item {
+  padding-left: 26px;
+}
+
+.tree-item__child-wrapper > .tree-item > .tree-item__child-wrapper {
+  display: flex;
+  flex-wrap: wrap;
+}

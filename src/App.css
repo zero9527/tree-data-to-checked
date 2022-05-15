@@ -1,0 +1,13 @@
+@import '~antd/dist/antd.css';
+
+.App {
+  padding: 10px;
+}
+
+.flex-box {
+  display: flex;
+}
+.left,
+.right {
+  flex: 1;
+}
