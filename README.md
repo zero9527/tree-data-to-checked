@@ -265,7 +265,7 @@ export const TreeNode: React.FC<TreeNodeProps> = ({
 
 类型: `isIndeterminate: (code: string) => boolean;` 
 
-判断自己选中，  同时选中的code与所有code数量不一致
+判断自己选中，  同时子孙节点没有全部选中
 
 ```ts
   /** 半选中 */
