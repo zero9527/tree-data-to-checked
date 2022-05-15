@@ -48,7 +48,7 @@ export function useCheckHandle({
   const handleCheck = (code: string, toChecked: boolean) => {
     // console.log(checkedCodesRef.current, code, toChecked);
     const hasChild = allCodes.current.some(
-      (_code) => code !== _code && _code.includes(code)
+      (allCodeitem) => code !== allCodeitem && allCodeitem.includes(code)
     );
     // 反选且没有下级:只处理自己
     if (!toChecked && !hasChild) {
@@ -58,19 +58,19 @@ export function useCheckHandle({
       return;
     }
     // 遍历处理上下级
-    allCodes.current.forEach((_code) => {
-      const isParentOrSelf = code.includes(_code);
-      const isChildOrSelf = _code.includes(code);
-      // console.log(_code, isParentOrSelf, isChildOrSelf);
+    allCodes.current.forEach((allCodeitem) => {
+      const isParentOrSelf = code.includes(allCodeitem);
+      const isChildOrSelf = allCodeitem.includes(code);
+      // console.log(allCodeitem, isParentOrSelf, isChildOrSelf);
       // 处理选中:自己和parent, child
       if (toChecked) {
         if (isParentOrSelf || isChildOrSelf) {
-          addCodeFromCheck(_code);
+          addCodeFromCheck(allCodeitem);
         }
       } else {
         // 处理反选:自己和child
         if (isChildOrSelf) {
-          deleteCodeFromCheck(_code);
+          deleteCodeFromCheck(allCodeitem);
         }
       }
     });

@@ -1,6 +1,8 @@
 # 树结构选中的扁平化处理
 
-树结构选中常见在权限树的编辑，[一个例子](https://codesandbox.io/s/tree-data-to-checked-uoy2rt)，本文代码[源码](https://github.com/zero9527/tree-data-to-checked)
+树结构选中常见在权限树
+
+![树结构选中处理.jpg](./public/树结构选中处理.jpg)
 
 本文以一种扁平的方式去处理权限树的几点：
 
@@ -9,9 +11,11 @@
 - child处理
 - parent处理
 
-## 前置说明
+## 1、前置说明
 
-### 节点数据与类型
+[一个例子](https://codesandbox.io/s/tree-data-to-checked-uoy2rt)，本文代码[源码](https://github.com/zero9527/tree-data-to-checked)
+
+### 1.1 节点数据与类型
 
 每一个节点数据包含了**是否选中**，因为本文的处理方式，其实节点没有`checked`，使用另外一个字段如`checkedCodes`传递就可以了；这个要看情况，即使放在一起，使用前提取出来就好了最终再加回去也很简单
 
@@ -49,7 +53,7 @@ export const permissionData: TreeItem[] = [
 ]
 ```
 
-### 节点code处理
+### 1.2 节点code处理
 
 - 每个节点的`code`都是唯一的
 - 当前节点的`code`前缀是父节点的`code`
@@ -57,8 +61,6 @@ export const permissionData: TreeItem[] = [
 也就是说，知道一个节点`code`就可以通过`allCodes`得到**所有**的**上层code**与**下层code**，这是扁平化处理的**前提**(所以在一开始设计的时候就应该定好`code的规则`)
 
 > 不一定叫code，可以是其他满足特点的命名
-
-
 
 - **所有的**`allCodes: string[]`
 
@@ -100,7 +102,7 @@ export function getCheckedCodes(treeData: TreeItem[]): string[] {
 }
 ```
 
-### 输出新数据
+### 1.3 输出新数据
 
 一般修改数据只要选中的`code`就够了；如果需要树结构整棵树的数据，只需要用`checkedCodes`去遍历整棵树重新设置`checked`即可，看需要转一次即可
 
@@ -124,9 +126,9 @@ export function setCheckedByValue(
 }
 ```
 
-## 节点渲染
+## 2、节点渲染
 
-### 接收参数
+### 2.1 接收参数
 
 - treeData: 权限树的数据
 - checkedCodesRaw：原始的选中code
@@ -193,7 +195,7 @@ export const Permission: React.FC<PermisisonProps> = (props) => {
 };
 ```
 
-### 渲染处理
+### 2.2 渲染处理
 
 - item: 当前节点数据
 - checkedCodes: 选中的code
@@ -253,15 +255,17 @@ export const TreeNode: React.FC<TreeNodeProps> = ({
 };
 ```
 
-## 数据处理
+## 3、数据处理
 
 > 实例代码里面因为使用的是react，由于异步的增量更新state，所以遍历的时候借助ref来同步数据，最终才一次性设置state更新视图。。。如果使用vue或其他循环时可以同步数据的框架就不需要ref这种做中间处理了
 
 主要放在 `useCheckHandle.ts`
 
-### 半选中
+### 3.1 半选中
 
 类型: `isIndeterminate: (code: string) => boolean;` 
+
+判断自己选中，  同时选中的code与所有code数量不一致
 
 ```ts
   /** 半选中 */
@@ -274,7 +278,7 @@ export const TreeNode: React.FC<TreeNodeProps> = ({
   };
 ```
 
-### 全选
+### 3.2 全选
 
 类型:`const onCheckAll = (toChecked: boolean) => void;` 
 
@@ -290,19 +294,14 @@ export const TreeNode: React.FC<TreeNodeProps> = ({
   }
 ```
 
-
-
-### 选中
+### 3.3 选中
 
 类型:`handleCheck: (code: string, toChecked: boolean) => void;` 
 
-
-
 选中处理逻辑`handleCheck`：
 
-- 反选且没有下级
-  - Y: 只处理自己
-  - N: 遍历处理上下级
+- 只处理自己
+  - 取消选中且没有下级
 - 遍历处理上下级
   - 选中(`toChecked: true`)
     - 满足条件：父节点或子节点或自己
@@ -361,7 +360,7 @@ export function useCheckHandle({
   const handleCheck = (code: string, toChecked: boolean) => {
     // console.log(checkedCodesRef.current, code, toChecked);
     const hasChild = allCodes.current.some(
-      (_code) => code !== _code && _code.includes(code)
+      (allCodeitem) => code !== allCodeitem && allCodeitem.includes(code)
     );
     // 反选且没有下级:只处理自己
     if (!toChecked && !hasChild) {
@@ -371,19 +370,19 @@ export function useCheckHandle({
       return;
     }
     // 遍历处理上下级
-    allCodes.current.forEach((_code) => {
-      const isParentOrSelf = code.includes(_code);
-      const isChildOrSelf = _code.includes(code);
-      // console.log(_code, isParentOrSelf, isChildOrSelf);
+    allCodes.current.forEach((allCodeitem) => {
+      const isParentOrSelf = code.includes(allCodeitem);
+      const isChildOrSelf = allCodeitem.includes(code);
+      // console.log(allCodeitem, isParentOrSelf, isChildOrSelf);
       // 处理选中:自己和parent, child
       if (toChecked) {
         if (isParentOrSelf || isChildOrSelf) {
-          addCodeFromCheck(_code);
+          addCodeFromCheck(allCodeitem);
         }
       } else {
         // 处理反选:自己和child
         if (isChildOrSelf) {
-          deleteCodeFromCheck(_code);
+          deleteCodeFromCheck(allCodeitem);
         }
       }
     });
@@ -411,3 +410,9 @@ export function useCheckHandle({
   };
 }
 ```
+
+
+
+## 4、最后
+
+到这里就完了
