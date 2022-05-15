@@ -1,6 +1,6 @@
 # 树结构选中的扁平化处理
 
-树结构选中常见在权限树的编辑，[一个例子](https://codesandbox.io/s/tree-data-to-checked-uoy2rt)
+树结构选中常见在权限树的编辑，[一个例子](https://codesandbox.io/s/tree-data-to-checked-uoy2rt)，本文代码[源码](https://github.com/zero9527/tree-data-to-checked)
 
 本文以一种扁平的方式去处理权限树的几点：
 
