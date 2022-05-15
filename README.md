@@ -286,7 +286,7 @@ export const TreeNode: React.FC<TreeNodeProps> = ({
   /** 全选 */
   const onCheckAll = (toChecked: boolean) => {
     if (toChecked) {
-      checkedCodesRef.current = allCodes.current;
+      checkedCodesRef.current = [...allCodes.current];
     } else {
       checkedCodesRef.current = [];
     }
@@ -324,7 +324,7 @@ export function useCheckHandle({
   checkedCodesRaw,
   onChange,
 }: PermisisonProps) {
-  const allCodes = useRef(getAllCodes(treeData));
+  const allCodes = useRef([...getAllCodes(treeData)]);
   const checkedCodesRef = useRef([...checkedCodesRaw]); // 解决循环的数据同步问题
   const [checkedCodes, setCheckedCodes] = useState([...checkedCodesRaw]);
   const [isAllChecked, setIsAllChecked] = useState(false);
@@ -393,7 +393,7 @@ export function useCheckHandle({
   /** 全选 */
   const onCheckAll = (toChecked: boolean) => {
     if (toChecked) {
-      checkedCodesRef.current = allCodes.current;
+      checkedCodesRef.current = [...allCodes.current];
     } else {
       checkedCodesRef.current = [];
     }
